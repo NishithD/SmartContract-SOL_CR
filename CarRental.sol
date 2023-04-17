@@ -22,13 +22,6 @@ contract CarRental {
 
     event RentTransaction(string VIN, string driverName, uint256 rentalFee);
 
-    /**
-     * @dev Adds a new driver to the system.
-     *
-     * @param _name Name of the driver
-     * @param _age Age of the driver
-     * @param _drivingLicense Driving license of the driver
-     */
     function addDriver(
         string memory _name,
         uint256 _age,
@@ -37,15 +30,6 @@ contract CarRental {
         drivers[_drivingLicense] = Driver(_name, _age, _drivingLicense);
     }
 
-    /**
-     * @dev Adds a new car to the system.
-     *
-     * @param _make Make of the car
-     * @param _model Model of the car
-     * @param _year Year of the car
-     * @param _VIN Vehicle Identification Number of the car
-     * @param _price Price of the car
-     */
     function addCar(
         string memory _make,
         string memory _model,
@@ -56,13 +40,6 @@ contract CarRental {
         cars[_VIN] = Car(_make, _model, _year, _VIN, _price, true);
     }
 
-    /**
-     * @dev Rents a car for a specific rental fee.
-     *
-     * @param _VIN Vehicle Identification Number of the car
-     * @param _drivingLicense Driving license of the driver
-     * @param _rentalFee Rental fee for the car
-     */
     function rentCar(
         string memory _VIN,
         string memory _drivingLicense,
@@ -72,17 +49,14 @@ contract CarRental {
             bytes(drivers[_drivingLicense].name).length != 0,
             "Driver not registered."
         );
+        require(bytes(cars[_VIN].make).length != 0, "Car does not exist.");
         require(cars[_VIN].available, "Car is not available.");
         cars[_VIN].available = false;
         emit RentTransaction(_VIN, drivers[_drivingLicense].name, _rentalFee);
     }
 
-    /**
-     * @dev Returns a car that was previously rented.
-     *
-     * @param _VIN Vehicle Identification Number of the car
-     */
     function returnCar(string memory _VIN) public {
+        require(bytes(cars[_VIN].make).length != 0, "Car does not exist.");
         require(!cars[_VIN].available, "Car is not rented.");
         cars[_VIN].available = true;
     }
